@@ -7,13 +7,21 @@
 
 import SwiftUI
 
-class ImageMoveViewModel: ObservableObject {
+public class ImageMoveViewModel: ObservableObject {
     
     @Published var image = Image("")
     @Published var originalImage: UIImage?
     @Published var scale: CGFloat = 1.0
     @Published var xWidth: CGFloat = 0.0
     @Published var yHeight: CGFloat = 0.0
+    
+    public init(image: Image = Image(""), originalImage: UIImage? = nil, scale: CGFloat, xWidth: CGFloat, yHeight: CGFloat) {
+        self.image = image
+        self.originalImage = originalImage
+        self.scale = scale
+        self.xWidth = xWidth
+        self.yHeight = yHeight
+    }
     
     var position: CGSize {
         get {
