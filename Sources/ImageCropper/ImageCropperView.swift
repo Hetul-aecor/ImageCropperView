@@ -10,12 +10,20 @@ import SwiftUI
 public struct ImageCropperView: View {
     
     public struct CropperConfig {
-        let inset: CGFloat = 40
-        let bgColor: Color = Color.white
+        let inset: CGFloat
+        let bgColor: Color
         /// Used for action button color
-        let tintColor: Color = Color.white
-        let overlayColor: Color = Color.gray.opacity(0.5)
-        let actionBannerColor: Color = Color.black.opacity(0.4)
+        let tintColor: Color
+        let overlayColor: Color
+        let actionBannerColor: Color 
+        
+        public init(inset: CGFloat = 40, bgColor: Color = Color.white, tintColor: Color = Color.white, overlayColor: Color = Color.gray.opacity(0.5), actionBannerColor: Color = Color.black.opacity(0.4)) {
+            self.inset = inset
+            self.bgColor = bgColor
+            self.tintColor = tintColor
+            self.overlayColor = overlayColor
+            self.actionBannerColor = actionBannerColor
+        }
     }
     
     
@@ -50,7 +58,7 @@ public struct ImageCropperView: View {
     var completion: (UIImage?) -> Void
     var navigationController: UINavigationController
     
-    init(navController: UINavigationController, viewModel: ImageMoveViewModel = .init(), config: CropperConfig = CropperConfig(), imageAttributes: ImageAttributes, completion: @escaping(UIImage?) -> Void) {
+    public init(navController: UINavigationController, viewModel: ImageMoveViewModel = .init(scale: 1, xWidth: 0, yHeight: 0), config: CropperConfig = CropperConfig(), imageAttributes: ImageAttributes, completion: @escaping(UIImage?) -> Void) {
         navigationController = navController
         _viewModel = StateObject(wrappedValue: viewModel)
         cropperConfig = config
@@ -166,7 +174,7 @@ extension ImageCropperView {
 }
 struct ImageCropperView_Preview: PreviewProvider {
     static var previews: some View {
-        ImageCropperView(navController: UINavigationController(), viewModel: ImageMoveViewModel(), imageAttributes: ImageAttributes(originalImage: UIImage(named:"banner2.png")!, scale: 1, xWidth: 0, yHeight: 0)) { croppedImage in
+        ImageCropperView(navController: UINavigationController(), viewModel: ImageMoveViewModel(scale: 1, xWidth: 0, yHeight: 0), imageAttributes: ImageAttributes(originalImage: UIImage(named:"banner2.png")!, scale: 1, xWidth: 0, yHeight: 0)) { croppedImage in
             
         }
     }
