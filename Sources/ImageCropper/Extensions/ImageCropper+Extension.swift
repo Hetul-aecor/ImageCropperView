@@ -1,6 +1,6 @@
 //
 //  ImageCropper+Extension.swift
-//  CommunageApp
+//  ImageCropper
 //
 //  Created by Hetul Soni on 17/01/23.
 //
@@ -162,23 +162,31 @@ public extension ImageCropperView {
     /// - Note: But if the user saves the image in one mode and them opens it in another, the
     ///scale and size will be slightly off.
     ///
-    func composeImageAttributes() {
-        
-        let scale = (inputImage?.size.width)! / displayW
+    func composeImageAttributes() -> Result<UIImage, Error> {
+        guard let imageToAdjust = inputImage else {
+            return .failure(ImageCropperError.noImageToCrop)
+        }
+        let scale = (imageToAdjust.size.width) / displayW
         let originAdjustment = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
         let diameter = ( originAdjustment - cropperConfig.inset * 2 ) * scale
         
         let xPos = ( ( ( displayW - originAdjustment ) / 2 ) + cropperConfig.inset + ( currentPosition.width * -1 ) ) * scale
         let yPos = ( ( ( displayH - originAdjustment ) / 2 ) + cropperConfig.inset + ( currentPosition.height * -1 ) ) * scale
         
-        let tempUIImage: UIImage = croppedImage(from: inputImage!, croppedTo: CGRect(x: xPos, y: yPos, width: diameter, height: diameter))
+        let result = imageToAdjust.croppedImage(croppedTo: CGRect(x: xPos, y: yPos, width: diameter, height: diameter))
         
-        imageAttributes.image = Image(uiImage: tempUIImage)
-        imageAttributes.originalImage = inputImage
-        imageAttributes.croppedImage = tempUIImage
-        imageAttributes.scale = zoomAmount
-        imageAttributes.xWidth = currentPosition.width
-        imageAttributes.yHeight = currentPosition.height
-        
+        switch result {
+        case .success(let tempUIImage):
+            imageAttributes.image = Image(uiImage: tempUIImage)
+            imageAttributes.originalImage = imageToAdjust
+            imageAttributes.croppedImage = tempUIImage
+            imageAttributes.scale = zoomAmount
+            imageAttributes.xWidth = currentPosition.width
+            imageAttributes.yHeight = currentPosition.height
+            return .success(tempUIImage)
+        case .failure(let error):
+            return .failure(error)
+            
+        }
     }
 }

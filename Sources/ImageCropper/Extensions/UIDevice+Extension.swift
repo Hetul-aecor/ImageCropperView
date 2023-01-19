@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  UIDevice+Extension.swift
+//  ImageCropper
 //
 //  Created by Hetul Soni on 18/01/23.
 //
