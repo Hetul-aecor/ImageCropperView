@@ -1,6 +1,6 @@
 //
 //  ImageAttributes.swift
-//  CommunageApp
+//  ImageCropper
 //
 //  Created by Hetul Soni on 17/01/23.
 //

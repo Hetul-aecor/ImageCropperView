@@ -1,6 +1,6 @@
 //
 //  ImageCropperView.swift
-//  CommunageApp
+//  ImageCropper
 //
 //  Created by Hetul Soni on 16/01/23.
 //
@@ -55,10 +55,10 @@ public struct ImageCropperView: View {
     ///The input image aspect ratio
     @State var inputImageAspectRatio: CGFloat = 0.0
     
-    var completion: (UIImage?) -> Void
+    var completion: (Result<UIImage, Error>) -> Void
     var navigationController: UINavigationController
     
-    public init(navController: UINavigationController, viewModel: ImageMoveViewModel = .init(scale: 1, xWidth: 0, yHeight: 0), config: CropperConfig = CropperConfig(), imageAttributes: ImageAttributes, completion: @escaping(UIImage?) -> Void) {
+    public init(navController: UINavigationController, viewModel: ImageMoveViewModel = .init(scale: 1, xWidth: 0, yHeight: 0), config: CropperConfig = CropperConfig(), imageAttributes: ImageAttributes, completion: @escaping(Result<UIImage, Error>) -> Void) {
         navigationController = navController
         _viewModel = StateObject(wrappedValue: viewModel)
         cropperConfig = config
@@ -70,8 +70,8 @@ public struct ImageCropperView: View {
         ZStack {
             ZStack {
                 cropperConfig.bgColor
-                if viewModel.originalImage != nil {
-                    Image(uiImage: viewModel.originalImage!)
+                if let originalImage = viewModel.originalImage {
+                    Image(uiImage: originalImage)
                         .resizable()
                         .scaleEffect(zoomAmount + currentAmount)
                         .scaledToFill()
@@ -89,7 +89,7 @@ public struct ImageCropperView: View {
             }
             
             Rectangle()
-                .fill(cropperConfig.bgColor)
+                .fill(cropperConfig.overlayColor)
                 .mask(RectangleShapeMask().fill(style: FillStyle(eoFill: true)))
             
             VStack(spacing: 0) {
@@ -103,8 +103,8 @@ public struct ImageCropperView: View {
                     }
                     Spacer()
                     Button {
-                        composeImageAttributes()
-                        completion(imageAttributes.croppedImage)
+                        let result = composeImageAttributes()
+                        completion(result)
                         navigationController.dismiss(animated: true)
                     } label: {
                         Text("Save")
